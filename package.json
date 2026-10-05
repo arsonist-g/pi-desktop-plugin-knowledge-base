@@ -2,7 +2,6 @@
   "name": "pi-desktop-plugin-knowledge-base",
   "version": "0.1.0",
   "private": true,
-  "type": "module",
   "description": "PI-Desktop plugin: search a self-hosted LightRAG knowledge base from the agent",
   "scripts": {
     "test": "node --test test/kb-search.test.mjs"

@@ -11,7 +11,8 @@ product codename, an in-house procedure, a term of art from their field.
 
 ## When to look it up
 
-Call `kb_search` **before** answering when any of these is true:
+Call the knowledge-base search tool **before** answering when any of these is
+true:
 
 - The user uses a word or abbreviation that reads as a name rather than a normal
   noun — likely specific to them, their team, their project or their field.
@@ -30,6 +31,11 @@ A lookup costs a round trip; spend it where private context decides the answer.
 
 ## How to look it up
 
+- The tool is the plugin tool `kb_search`. The host namespaces plugin tools, so
+  the name the model sees is `plugin_<pluginId>_kb_search` — with the default
+  plugin id that is `plugin_local_knowledge_base_kb_search`. If that exact name
+  is not in the catalog, activate whichever entry for this plugin ends in
+  `_kb_search` instead of assuming the bare name exists.
 - Pass the term itself as `query`, in the language the user wrote it in. A
   short question works too when the term alone is ambiguous.
 - Leave `mode` alone unless the first lookup comes back thin. Then try `naive`
