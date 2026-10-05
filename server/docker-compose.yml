@@ -1,0 +1,25 @@
+services:
+  lightrag:
+    image: ghcr.io/hkuds/lightrag:latest
+    container_name: lightrag
+    restart: unless-stopped
+    # Loopback only: put a TLS reverse proxy in front, never expose this port.
+    ports:
+      - "127.0.0.1:9621:9621"
+    volumes:
+      - ./data/rag_storage:/app/data/rag_storage
+      - ./data/inputs:/app/data/inputs
+      - ./data/prompts:/app/data/prompts
+      - ./data/ui_templates:/app/data/ui_templates:ro
+      - ./.env:/app/.env:ro
+    environment:
+      WORKING_DIR: /app/data/rag_storage
+      INPUT_DIR: /app/data/inputs
+      PROMPT_DIR: /app/data/prompts
+      HOST: 0.0.0.0
+      PORT: "9621"
+      UI_TEMPLATES_DIR: /app/data/ui_templates
+    extra_hosts:
+      # Lets LLM_BINDING_HOST point at a service on the host, e.g.
+      # http://host.docker.internal:11434/v1 for a local Ollama.
+      - "host.docker.internal:host-gateway"

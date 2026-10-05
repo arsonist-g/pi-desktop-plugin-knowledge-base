@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "id": "local.knowledge-base",
+  "name": "知识库检索",
+  "version": "0.1.0",
+  "description": "让 Agent 检索你自建的 LightRAG 知识库；文档解析可交给 mineru.net，长文告别「AI 不知道这是什么概念」。",
+  "author": "arsonist-g",
+  "main": "main.js",
+  "permissions": ["agent.tool.register", "agent.prompt.inject", "net.fetch", "net.anyHost"],
+  "contributes": {
+    "agentTools": [
+      {
+        "name": "kb_search",
+        "description": "Search the user's personal knowledge base (a self-hosted LightRAG server) for a term, concept or internal note. Call this before answering when the user uses a name, abbreviation or piece of jargon that may only be defined in their own documents.",
+        "risk": "low",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "What to look up. A term or a short question; the same language the user wrote in works best."
+            },
+            "mode": {
+              "type": "string",
+              "enum": ["mix", "naive", "local", "global", "hybrid"],
+              "description": "Retrieval mode. mix (default) combines the knowledge graph with vector search; naive is vector search only and is the fastest."
+            },
+            "topK": {
+              "type": "number",
+              "description": "How many candidate items to retrieve (1-100). Defaults to the plugin setting."
+            }
+          },
+          "required": ["query"]
+        }
+      }
+    ],
+    "skills": ["skills/knowledge-base.md"],
+    "settings": [
+      {
+        "key": "serverUrl",
+        "title": "LightRAG 服务地址",
+        "description": "例如 https://kb.example.com ，不要带结尾斜杠。留空则 kb_search 会提示未配置。",
+        "type": "string",
+        "default": ""
+      },
+      {
+        "key": "apiKey",
+        "title": "LightRAG API Key",
+        "description": "服务端 .env 里的 LIGHTRAG_API_KEY。存在插件的私有设置文件里，不要提交到版本库。",
+        "type": "string",
+        "default": ""
+      },
+      {
+        "key": "mode",
+        "title": "默认检索模式",
+        "description": "mix 质量最好；naive 只走向量检索，最快。",
+        "type": "select",
+        "default": "mix",
+        "enum": [
+          { "label": "mix（图谱 + 向量）", "value": "mix" },
+          { "label": "naive（纯向量，最快）", "value": "naive" },
+          { "label": "local（实体邻域）", "value": "local" },
+          { "label": "global（关系全局）", "value": "global" },
+          { "label": "hybrid（local + global）", "value": "hybrid" }
+        ]
+      },
+      {
+        "key": "topK",
+        "title": "默认召回条数",
+        "description": "每次检索返回的候选数量，1-100。",
+        "type": "number",
+        "default": 10
+      },
+      {
+        "key": "snippetChars",
+        "title": "单条片段字符上限",
+        "description": "每条命中内容截断到这个长度，避免一次塞满上下文。0 表示不截断。",
+        "type": "number",
+        "default": 2000
+      }
+    ]
+  }
+}
