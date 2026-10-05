@@ -69,6 +69,12 @@ PI-Desktop → 侧边栏 **插件** → 右上角菜单 **从本地目录安装*
 | 默认召回条数 | 默认 10 |
 | 单条片段字符上限 | 默认 2000，避免一次塞满上下文 |
 
+⚠️ **这一栏容易被填错。** 要填的是 **LightRAG 自己发的 API Key**（服务端 `.env` 的
+`LIGHTRAG_API_KEY`，一个 40 位随机串），**不是**服务端用来调用 LLM 的那把上游令牌
+（比如 new-api / OpenAI 的 `sk-…`）。填错的表现是工具返回 403：请求确实发出去了，
+被 LightRAG 拒了。两把串长得像、都可能叫「token」，但作用域不同——上游令牌管
+「LightRAG 能不能调模型」，API Key 管「你手里的客户端能不能调 LightRAG」。
+
 API Key 存在插件的私有设置文件里（`<应用数据目录>/plugins/data/local.knowledge-base/`），
 不会进版本库。稳妥起见，可以给 PI-Desktop 单独用一个只读用途的 Key。
 
@@ -95,7 +101,7 @@ API Key 存在插件的私有设置文件里（`<应用数据目录>/plugins/dat
 | 现象 | 原因 |
 | --- | --- |
 | 工具回「知识库还没配置」 | 设置里服务地址是空的 |
-| 工具回 HTTP 401/403 | API Key 和服务端 `LIGHTRAG_API_KEY` 不一致 |
+| 工具回 HTTP 401/403 | API Key 填成了上游令牌，或和服务端 `LIGHTRAG_API_KEY` 不一致 |
 | 工具回「没有命中内容」 | 文档还没入库，或换个说法 |
 | 连不上 | 从这台电脑 `curl https://你的域名/health` 试一下 |
 
